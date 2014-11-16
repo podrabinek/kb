@@ -71,6 +71,7 @@ if (empty($game)) {
         <div class="col-sm-5">
           <img src="<?=BASE_URL?>img/<?=$game["thumbnail_large"]?>">
           <h3><?=$game["title"]?></h3>
+          <p><em><?=$game["category"]?></em></p>
           <p><?=$game["description"]?></p>
           <p><a href="" class="btn btn-primary" role="button">Играть</a></p>
           

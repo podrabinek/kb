@@ -81,7 +81,12 @@ function get_game_single($id) {
 	require(ROOT_PATH . "inc/db.php");
 
 	try {
-		$results = $db->prepare("SELECT id,title,description,player_url,thumbnail_large FROM games WHERE id = ?");
+		$results = $db->prepare("
+			SELECT g.id, title, description, player_url, thumbnail_large, gc.name as category
+			FROM games g
+			INNER JOIN games_category gc ON g.category_id = gc.id
+			WHERE g.id = ?
+			");
 		$results->bindParam(1,$id);
 		$results->execute();
 	} catch (PDOException $e) {
@@ -92,8 +97,8 @@ function get_game_single($id) {
 	$game = $results->fetch(PDO::FETCH_ASSOC);
 
 	// echo "<pre>";
-	// var_dump($game);
-	// exit;
+	//  var_dump($game);
+	//  exit;
 
 	return $game;
 
