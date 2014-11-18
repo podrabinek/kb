@@ -16,7 +16,7 @@ function filePath($filePath) {
 
 
 /* 
- * Returns an array of game information for the game whcih matches the id;
+ * Returns an array of game information for the game which matches the id;
  * returns a boolean false if no matches
  */
 function get_games_list() {
@@ -31,15 +31,44 @@ function get_games_list() {
 	    exit;
 	}
 
-	$games = $results->fetchAll();	
+	$games = $results->fetchAll(PDO::FETCH_ASSOC);	
 
-	 // echo "<pre>";
-	 // var_dump($games);
-	 // exit;
+	  // echo "<pre>";
+	  // var_dump($games);
+	  // exit;
 
 	return $games;
 
 }
+
+
+
+/* 
+ * Returns an array of categories names for the matching game 
+ */
+function get_games_category_list($ids) {
+
+	require(ROOT_PATH . "inc/db.php");
+
+  try {
+    $results = $db->prepare("SELECT id,name FROM games_category WHERE id IN ($ids)");
+    $results->execute();
+  } catch (PDOException $e) {
+      echo 'Connection failed: ' . $e->getMessage();
+      exit;
+  }
+
+  $names = $results->fetchAll(PDO::FETCH_ASSOC);
+
+	  // echo "<pre>";
+	  // var_dump($names);
+	  // exit;
+
+  return $names;
+
+}
+
+
 
 /* 
  * Returns total number of selected games
@@ -82,7 +111,7 @@ function get_game_single($id) {
 
 	try {
 		$results = $db->prepare("
-			SELECT g.id, title, description, player_url, thumbnail_large, gc.name as category
+			SELECT g.id, category_id, title, description, player_url, thumbnail_large, gc.name as category
 			FROM games g
 			INNER JOIN games_category gc ON g.category_id = gc.id
 			WHERE g.id = ?

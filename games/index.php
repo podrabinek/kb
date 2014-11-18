@@ -1,8 +1,13 @@
 <?php
 
 
+
 include('../inc/config.php');
 require_once('../inc/func.php');
+
+include('../inc/class/Voodoo/Paginator.php');
+
+
 
 if(empty($_GET["page"])) {
   $current_page = 1;
@@ -10,10 +15,11 @@ if(empty($_GET["page"])) {
   $current_page = $_GET["page"];
 }
 
+$games_per_page = 600;
+
 $current_page = intval($current_page);
 
 $total_games = get_games_count();
-$games_per_page = 8;
 $total_pages = ceil($total_games / $games_per_page);
 
 if($current_page > $total_pages) {
@@ -103,33 +109,24 @@ $games = get_games_subset($start, $end);
       <div class="row">
 
 
-    <nav>
-      <ul class="pagination">
+
+<?php
 
 
-      <?php 
-
-      $i = 0;
-      while ($i < $total_pages) {
-        # code...
-        $i += 1;
-        if($i == $current_page) { $active = ' class="active"'; } else { $active = '';}
-        echo '<li'.$active.'><a href="./?page='.$i.'">'.$i.'</a></li>';
-
-      }
-
-      ?>
+// to catch the page number pattern in the request url
+$pagePattern = "page=(:num)"; 
 
 
-<!--         <li><a href="#"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
-        <li><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li><a href="#"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li> -->
-      </ul>
-    </nav>      
+$paginator = (new Voodoo\Paginator($pagePattern))
+                ->setItems($total_games, $games_per_page);
+?>
+
+
+<?= $paginator; ?>
+
+
+
+     
 
       <?php
 
@@ -147,7 +144,7 @@ $games = get_games_subset($start, $end);
           <img src="<?=BASE_URL?>img/<?=$row["thumbnail_large"]?>">
           <div class="">
             <h5><a href="/games/<?=$row["id"]?>/"><?=$row["title"]?></a></h5>
-            <p><?=get_clipped_text($description, 100)?></p>	            
+            <p><?=strip_tags(get_clipped_text($description, 100))?></p>	            
           </div>
 	      </div>
 

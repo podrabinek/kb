@@ -10,9 +10,11 @@ if (isset($_GET["id"])) {
 }
 
 if (empty($game)) {
-  header("Location: " . BASE_URL);
-  exit;
+  // header("Location: " . BASE_URL);
+  // exit;
 }
+
+
 
 
 ?>
@@ -67,6 +69,24 @@ if (empty($game)) {
         <div class="col-xs-12 col-sm-7">        
           <iframe src="<?=$game["player_url"]?>" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" width="600" height="600"></iframe>
         </div>
+
+        <?php
+
+        //Получаем список названий категорий
+        $cat_names = get_games_category_list($game["category_id"]);
+
+        // Формируем список ссылок
+        $list = array();
+        foreach($cat_names as $cat) {
+          $list[] = '<li><a href="/catalog/'.$cat["id"].'/">'.$cat["name"].'</a></li>';
+        }
+
+        // Выводим список категорий ссылками, через запятую
+        echo '<ul class="list-unstyled list-inline">'.implode(" | ", $list).'</ul>';
+
+        ?>
+
+
 
         <div class="col-sm-5">
           <img src="<?=BASE_URL?>img/<?=$game["thumbnail_large"]?>">
